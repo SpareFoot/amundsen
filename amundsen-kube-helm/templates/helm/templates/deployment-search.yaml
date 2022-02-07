@@ -46,7 +46,7 @@ spec:
     {{- end }}
       containers:
       - name: {{ .Chart.Name }}-{{ .Values.search.serviceName }}
-        image: {{ .Values.search.image }}:{{ .Values.search.imageTag }}
+        image: {{ required "app.image must be provided" .Values.image | quote }}  # ECR image
         ports:
         - containerPort: 5001
         envFrom:
