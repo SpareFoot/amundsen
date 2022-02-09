@@ -46,7 +46,7 @@ spec:
     {{- end }}
       containers:
       - name: {{ .Chart.Name }}-{{ .Values.frontEnd.serviceName }}
-        image: {{ required "app.image must be provided" .Values.image | quote }}  # ECR image
+        image: {{ .Values.frontEnd.image }}:{{ .Values.frontEnd.imageTag }}
         imagePullPolicy: Always
         ports:
           - containerPort: 5000
