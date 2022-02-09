@@ -45,7 +45,7 @@ spec:
     {{- end }}
       containers:
       - name: {{ .Chart.Name }}-{{ .Values.metadata.serviceName }}
-        image: {{ .Values.metadata.image }}:{{ .Values.metadata.imageTag }}
+        image: {{ required "app.image must be provided" .Values.image | quote }}  # ECR image
         imagePullPolicy: Always
         ports:
         - containerPort: 5002
