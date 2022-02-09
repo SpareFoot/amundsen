@@ -406,11 +406,13 @@ sf_env: {{sf_env}}
 ingress:
   # --  set this to true, if you want a ingress that expose HTTP and HTTPS routes from outside the cluster to your amundsen services. Do not use this if you are in a public cloud such as AWS, GCP
   enabled: true
-  annotations: {}
-     kubernetes.io/ingress.class: nginx
+  annotations:
+    {
+      kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
+    }
   # -- Assign a http url to your Amundsen service
-hosts:
+  hosts:
     - host: snorkel{{sf_env}}.sparedev.com
       paths: ["/"]
     {% if sf_env == 'prod' %}
