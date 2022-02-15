@@ -400,26 +400,28 @@ elasticsearch:
     requests:
       memory: 10Gi
   
-    
+sf_env: {{sf_env}}
+
 ##############  Values for ingress ###############
 ingress:
   # --  set this to true, if you want a ingress that expose HTTP and HTTPS routes from outside the cluster to your amundsen services. Do not use this if you are in a public cloud such as AWS, GCP
-  enabled: true
-  annotations:
-    {
-      kubernetes.io/ingress.class: nginx
-    }
+  enabled: false
+  annotations: {
+    kubernetes.io/ingress.class: "nginx"
+  }
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   # -- Assign a http url to your Amundsen service
   hosts:
     - host: snorkel{{sf_env}}.sparedev.com
       paths: ["/"]
-    {% if sf_env == 'prod' %}
-    - host: snorkel.sparedev.com
-      paths: ["/"]
-    {% endif %}
+#    {{- if .Values.sf_env == "prod" }}
+#    - host: "snorkel.sparedev.com"
+#      paths: ["/"]
+#    {{- end }}
 #  tls:
 #    - hosts:
 #        - amundsen-test.your-domain.com
      # secretName: chart-example-tls
+
+
