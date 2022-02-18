@@ -319,13 +319,13 @@ neo4j:
 
   # neo4j.resources -- See pod resourcing [ref](https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/)
   resources: {}
-  #resources:
-  #  limits:
-  #    cpu: 2
-  #    memory: 2Gi
-  # requests:
-  #    cpu: 1
-  #    memory: 1Gi
+#  resources:
+#    limits:
+#      cpu: 2
+#      memory: 2Gi
+#   requests:
+#      cpu: 1
+#      memory: 1Gi
 
   # neo4j.config -- Neo4j application specific configuration. This type of configuration is why the charts/stable version is not used. See [ref](https://github.com/helm/charts/issues/21439)
   config:
@@ -343,12 +343,12 @@ neo4j:
 
   # neo4j.persistence -- Neo4j persistence. Turn this on to keep your data between pod crashes, etc. This is also needed for backups.
   persistence: {}
-  #  storageClass: gp2
-  #  size: 10Gi
-  #  accessMode: ReadWriteMany
-  #  efs:
-  #    dns:
-  #  path: "/"
+#    storageClass: gp2
+#    size: 10Gi
+#    accessMode: ReadWriteMany
+#    efs:
+#      dns:
+#    path: "/"
 
   # neo4j.backup -- If enabled is set to true, make sure and set the s3 path as well.
   backup:
@@ -385,7 +385,7 @@ elasticsearch:
   # elasticsearch.enabled -- set this to false, if you want to provide your own ES instance.
   enabled: true
   # -- this is the service name of the amundsen elasticsearch master. Change it if you want to give a new name for the elasticsearch service  
-  fullnameOverride: "amundsen-elasticsearch-master"
+  fullnameOverride: "snorkel-elasticsearch-master"
   # -- If this set to true, the es pod will require some admin privilege, which is not allowed in most case. So set it to false
   sysctlInitContainer:
     enabled: false
@@ -396,9 +396,16 @@ elasticsearch:
   # -- set the pod resources
   resources:
     limits:
-      memory: 15Gi
+      memory: 10Gi
     requests:
       memory: 10Gi
+  # overwrite elasticsearch values.yaml
+  volumeClaimTemplate:
+    accessModes: ["ReadWriteOnce"]
+    resources:
+      requests:
+        storage: 10Gi
+  replicas: 1
 
 
 ##############  Values for ingress ###############
@@ -406,7 +413,7 @@ elasticsearch:
 ingress:
   enabled: true
   annotations: {
-    kubernetes.io/ingress.class: "nginx"
+    kubernetes.io/ingress.class: nginx
   }
   hosts:
     - host: snorkelstage.sparedev.com
