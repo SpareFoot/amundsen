@@ -342,24 +342,28 @@ neo4j:
   serviceType: ClusterIP
 
   # neo4j.persistence -- Neo4j persistence. Turn this on to keep your data between pod crashes, etc. This is also needed for backups.
-  persistence: {}
-#    storageClass: gp2
-#    size: 10Gi
-#    accessMode: ReadWriteMany
-#    efs:
-#      dns:
-#    path: "/"
+  persistence:
+    storageClass: "aws-efs"
+    size: 6Gi
+    accessMode: ReadWriteMany
+    efs:
+      dns: "fs-2e834dad.efs.us-east-1.amazonaws.com"
+    path: "/"
+
+  persistenceClaim:
+    size: 6Gi
+    accessMode: ReadWriteMany
 
   # neo4j.backup -- If enabled is set to true, make sure and set the s3 path as well.
   backup:
     # neo4j.backup.enabled - Whether to include the backup neo4j cron pod. If set to true, s3Path is required.
-    enabled: false
+    enabled: true
 
     # neo4j.backup.s3Path -- The s3path to write to for backups.
-    s3Path: "s3://dev/null"
+    s3Path: 's3://sf-test-neo4j-backups'
 
     # neo4j.backup.schedule -- The schedule to run backups on. Defaults to hourly.
-    schedule: "0 * * * *"
+    schedule: "0 12 * * 6"
     podAnnotations: {}
 
   # neo4j.nodeSelector -- neo4j specific nodeSelector.
@@ -392,19 +396,21 @@ elasticsearch:
   # -- elasticsearch docker image name
   image: elasticsearch
   # -- set init memory size (Xms) and maximum memory size (Xmx) for the es jvm.
-  esJavaOpts: -Xmx8g -Xms8g
+  esJavaOpts: -Xmx2g -Xms2g
   # -- set the pod resources
   resources:
     limits:
-      memory: 10Gi
+      memory: 4Gi
+      cpu: 800m
     requests:
-      memory: 10Gi
+      memory: 2Gi
+      cpu: 800m
   # overwrite elasticsearch values.yaml
   volumeClaimTemplate:
     accessModes: ["ReadWriteOnce"]
     resources:
       requests:
-        storage: 10Gi
+        storage: 4Gi
   replicas: 1
 
 

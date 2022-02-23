@@ -1,4 +1,4 @@
-{{ if and .Values.neo4j.enabled (and .Values.neo4j.backup.enabled .Values.neo4j.backup.s3Path .Values.neo4j.persistence) }}
+{{- if and .Values.neo4j.enabled (and .Values.neo4j.backup.enabled .Values.neo4j.backup.s3Path .Values.neo4j.persistence) -}}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -20,15 +20,12 @@ spec:
             app: {{ template "amundsen.name" . }}
             component: neo4j-s3-backup
             release: {{ .Release.Name }}
-      {{- with .Values.neo4j.backup.podAnnotations }}
-          annotations:
-{{ toYaml . | indent 12 }}
-      {{- end }}
+          annotations: {}
         spec:
           restartPolicy: Never
           containers:
           - name: backup-neo4j
-            image: neo4j:{{ .Values.neo4j.version }}
+            image: neo4j
             command:
             - "/bin/sh"
             - "-c"

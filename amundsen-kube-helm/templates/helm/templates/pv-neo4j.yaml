@@ -17,4 +17,7 @@ spec:
   nfs:
     server: {{ .Values.neo4j.persistence.efs.dns }}
     path: {{ default "/" .Values.neo4j.persistence.path }}
+  claimRef:
+    name: neo4j-pvc
+    namespace: stage
 {{- end }}
