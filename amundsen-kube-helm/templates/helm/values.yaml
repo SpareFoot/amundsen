@@ -1,5 +1,7 @@
 # Duplicate this file and put your customization here
 
+sf_env: {{sf_env}}
+
 clusterDomain: cluster.local
 
 # common settings for all apps
@@ -347,7 +349,7 @@ neo4j:
     size: 6Gi
     accessMode: ReadWriteMany
     efs:
-      dns: "fs-2e834dad.efs.us-east-1.amazonaws.com"
+      dns: ""
     path: "/"
 
   persistenceClaim:
@@ -422,5 +424,10 @@ ingress:
     kubernetes.io/ingress.class: nginx
   }
   hosts:
-    - host: snorkelstage.sparedev.com
+    - host: snorkel{{sf_env}}.sparedev.com
       paths: ["/"]
+    {% if sf_env == 'prod' %}
+    - host: snorkel.sparedev.com
+      paths: ["/"]
+    {% endif %}
+
