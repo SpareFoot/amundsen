@@ -28,7 +28,6 @@ spec:
               service:
                 name: {{ template "amundsen.name" $ }}-{{ $.Values.frontEnd.serviceName }}
                 port:
-                  # the port config in frontend service and deployement is fixed. so we have no choice here
                   number: 80
           {{- end }}
     {{- end }}
