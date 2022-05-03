@@ -398,6 +398,7 @@ elasticsearch:
   # -- set init memory size (Xms) and maximum memory size (Xmx) for the es jvm.
   esJavaOpts: -Xmx2g -Xms2g
   # -- set the pod resources
+  clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
   resources:
     limits:
       memory: 4Gi
@@ -413,7 +414,7 @@ elasticsearch:
         storage: 4Gi
   replicas: 1
 
-sf_env: {{ sf_env }}
+#sf_env: {{ sf_env }}
 
 ##############  Values for ingress ###############
   # --  set this to true, if you want a ingress that expose HTTP and HTTPS routes from outside the cluster to your amundsen services. Do not use this if you are in a public cloud such as AWS, GCP
@@ -423,9 +424,9 @@ ingress:
     kubernetes.io/ingress.class: nginx
   }
   hosts:
-    - host: snorkel{{ sf_env }}.sparedev.com
+    - host: snorkelstage.sparedev.com
       paths: ["/"]
-    {% if sf_env == 'prod' %}
-    - host: snorkel.sparedev.com
-      paths: ["/"]
-    {% endif %}
+#    {% if sf_env == 'prod' %}
+#    - host: snorkel.sparedev.com
+#      paths: ["/"]
+#    {% endif %}
