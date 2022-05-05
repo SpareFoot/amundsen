@@ -14,13 +14,12 @@ LOGGER = logging.getLogger(__name__)
 
 # Redash natively runs on port 5000, the same port as Amundsen.
 # Make sure to update the running port to match your deployment!
-DEFAULT_URL = 'https://redashstage.sparedev.com/'
+DEFAULT_URL = 'http://localhost:5010'
 
 
 # Update this mapping with your database.cluster and Redash query ID
 SOURCE_DB_QUERY_MAP = {
-    'postgres.analytics': 46,
-    'athena.AwsDataCatalog': 45
+    'snowflake.ca_covid': 1
 }
 
 # This example uses a common, system user, for the API key
