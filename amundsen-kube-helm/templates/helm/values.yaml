@@ -347,9 +347,10 @@ neo4j:
     size: 6Gi
     accessMode: ReadWriteMany
     efs:
-      dns: "fs-2e834dad.efs.us-east-1.amazonaws.com"
-      {% if sf_env == 'prod' %}
+      {%- if sf_env == 'prod' %}
       dns: "fs-f54fe376.efs.us-east-1.amazonaws.com"
+      {%- elif sf_env == 'stage' %}
+      dns: "fs-2e834dad.efs.us-east-1.amazonaws.com"
       {% endif %}
     path: "/"
 
@@ -399,6 +400,24 @@ elasticsearch:
   # -- elasticsearch docker image name
   image: elasticsearch
   # -- set init memory size (Xms) and maximum memory size (Xmx) for the es jvm.
+  {%- if sf_env == 'prod' %}
+  esJavaOpts: -Xmx4g -Xms4g
+  # -- set the pod resources
+  resources:
+    limits:
+      memory: 8Gi
+      cpu: 1200m
+    requests:
+      memory: 4Gi
+      cpu: 1200m
+  # overwrite elasticsearch values.yaml
+  volumeClaimTemplate:
+    accessModes: ["ReadWriteOnce"]
+    resources:
+      requests:
+        storage: 8Gi
+  replicas: 2
+  {%- elif sf_env == 'stage' %}
   esJavaOpts: -Xmx2g -Xms2g
   # -- set the pod resources
   clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
@@ -416,6 +435,7 @@ elasticsearch:
       requests:
         storage: 4Gi
   replicas: 1
+  {% endif %}
 
 ##############  Values for ingress ###############
   # --  set this to true, if you want a ingress that expose HTTP and HTTPS routes from outside the cluster to your amundsen services. Do not use this if you are in a public cloud such as AWS, GCP
@@ -425,9 +445,10 @@ ingress:
     kubernetes.io/ingress.class: nginx
   }
   hosts:
-    - host: snorkel{{sf_env}}.sparedev.com
-      paths: ["/"]
-    {% if sf_env == 'prod' %}
+    {%- if sf_env == 'prod' %}
     - host: snorkel.sparedev.com
       paths: ["/"]
-    {% endif %}
+    {% elif sf_env == 'stage' %}
+    - host: snorkel{{sf_env}}.sparedev.com
+      paths: ["/"]
+    {% endif %
