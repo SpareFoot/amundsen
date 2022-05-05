@@ -448,7 +448,7 @@ ingress:
     {%- if sf_env == 'prod' %}
     - host: snorkel.sparedev.com
       paths: ["/"]
-    {% elif sf_env == 'stage' %}
+    {%- elif sf_env == 'stage' %}
     - host: snorkel{{sf_env}}.sparedev.com
       paths: ["/"]
-    {% endif %
+    {% endif %}
