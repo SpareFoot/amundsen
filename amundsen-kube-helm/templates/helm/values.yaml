@@ -401,22 +401,23 @@ elasticsearch:
   image: elasticsearch
   # -- set init memory size (Xms) and maximum memory size (Xmx) for the es jvm.
   {%- if sf_env == 'prod' %}
-  esJavaOpts: -Xmx4g -Xms4g
+  esJavaOpts: -Xmx2g -Xms2g
   # -- set the pod resources
+  clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
   resources:
     limits:
-      memory: 8Gi
-      cpu: 1200m
-    requests:
       memory: 4Gi
-      cpu: 1200m
+      cpu: 800m
+    requests:
+      memory: 2Gi
+      cpu: 800m
   # overwrite elasticsearch values.yaml
   volumeClaimTemplate:
     accessModes: ["ReadWriteOnce"]
     resources:
       requests:
-        storage: 8Gi
-  replicas: 2
+        storage: 4Gi
+  replicas: 1
   {%- elif sf_env == 'stage' %}
   esJavaOpts: -Xmx2g -Xms2g
   # -- set the pod resources
