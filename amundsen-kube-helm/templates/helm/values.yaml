@@ -400,10 +400,9 @@ elasticsearch:
   # -- elasticsearch docker image name
   image: elasticsearch
   # -- set init memory size (Xms) and maximum memory size (Xmx) for the es jvm.
-  {%- if sf_env == 'prod' %}
   esJavaOpts: -Xmx2g -Xms2g
   # -- set the pod resources
-  clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
+#  clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
   resources:
     limits:
       memory: 4Gi
@@ -416,27 +415,8 @@ elasticsearch:
     accessModes: ["ReadWriteOnce"]
     resources:
       requests:
-        storage: 4Gi
-  replicas: 1
-  {%- elif sf_env == 'stage' %}
-  esJavaOpts: -Xmx2g -Xms2g
-  # -- set the pod resources
-  clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
-  resources:
-    limits:
-      memory: 4Gi
-      cpu: 800m
-    requests:
-      memory: 2Gi
-      cpu: 800m
-  # overwrite elasticsearch values.yaml
-  volumeClaimTemplate:
-    accessModes: ["ReadWriteOnce"]
-    resources:
-      requests:
-        storage: 4Gi
-  replicas: 1
-  {% endif %}
+        storage: 2Gi
+  replicas: 2
 
 ##############  Values for ingress ###############
   # --  set this to true, if you want a ingress that expose HTTP and HTTPS routes from outside the cluster to your amundsen services. Do not use this if you are in a public cloud such as AWS, GCP
