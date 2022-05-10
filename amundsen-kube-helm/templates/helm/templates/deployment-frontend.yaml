@@ -46,7 +46,7 @@ spec:
     {{- end }}
       containers:
       - name: {{ .Chart.Name }}-{{ .Values.frontEnd.serviceName }}
-        image: {{ .Values.frontEnd.image }}:{{ .Values.frontEnd.imageTag }}
+        image: {{ .Values.image }}
         imagePullPolicy: Always
         ports:
           - containerPort: 5000
