@@ -64,12 +64,12 @@ class RedashComplexPreviewClient(BaseRedashPreviewClient):
                  redash_host: str = DEFAULT_URL,
                  user_api_key: Optional[str] = REDASH_USER_API_KEY) -> None:
         super().__init__(redash_host=redash_host, user_api_key=user_api_key)
-        self.default_query_limit = 100
+        self.default_query_limit = 50
         self.max_redash_cache_age = 3600  # One Hour
 
     def _get_query_api_key(self, params: Dict) -> Optional[str]:
-        if params.get('database') in ['redshift']:
-            return os.environ.get('REDSHIFT_USER_API_KEY', '')
+        if params.get('database') in ['postgres', 'athena']:
+            return 'iSjg81owEwVcUVKuuDcFwHKMj8VZoddkLyswMz3d'
         return None
 
     def get_redash_query_id(self, params: Dict) -> Optional[int]:
@@ -82,12 +82,6 @@ class RedashComplexPreviewClient(BaseRedashPreviewClient):
         """
         # These are sample values to show how table-level select clauses work
         field_select_vals = {
-            'snowflake.ca_covid': {
-                'open_data.case_demographics_age': (
-                    "date, SUBSTR(age_group, 0, 2) || '******' as age_group, totalpositive, case_percent, ca_percent"
-                ),
-                'open_data.statewide_testing': 'date, tested'
-            }
         }
 
         db_cluster_key = _build_db_cluster_key(params)
@@ -96,24 +90,24 @@ class RedashComplexPreviewClient(BaseRedashPreviewClient):
         # Always returns a value, defaults to '*' if nothing is defined
         return field_select_vals.get(db_cluster_key, {}).get(schema_tbl_key, '*')
 
-    def get_where_clause(self, params: Dict) -> str:
-        """
-        MUST return the entire where clause, including the word "where"
-        """
-        where_vals = {
-            'snowflake.ca_covid': {
-                'open_data.case_demographics_age': "totalpositive < 120",
-            }
-        }
-
-        db_cluster_key = _build_db_cluster_key(params)
-        schema_tbl_key = f"{params.get('schema')}.{params.get('tableName')}"
-
-        # Always returns a value, defaults to an empty string ('') if nothing is defined
-        where_clause = where_vals.get(db_cluster_key, {}).get(schema_tbl_key, '')
-
-        # Add the word where if a custom where clause is applied
-        if where_clause:
-            where_clause = f'WHERE {where_clause}'
-
-        return where_clause
+    # def get_where_clause(self, params: Dict) -> str:
+    #     """
+    #     MUST return the entire where clause, including the word "where"
+    #     """
+    #     where_vals = {
+    #         'snowflake.ca_covid': {
+    #             'open_data.case_demographics_age': "totalpositive < 120",
+    #         }
+    #     }
+    #
+    #     db_cluster_key = _build_db_cluster_key(params)
+    #     schema_tbl_key = f"{params.get('schema')}.{params.get('tableName')}"
+    #
+    #     # Always returns a value, defaults to an empty string ('') if nothing is defined
+    #     where_clause = where_vals.get(db_cluster_key, {}).get(schema_tbl_key, '')
+    #
+    #     # Add the word where if a custom where clause is applied
+    #     if where_clause:
+    #         where_clause = f'WHERE {where_clause}'
+    #
+    #     return where_clause
