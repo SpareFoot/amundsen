@@ -24,7 +24,7 @@ SOURCE_DB_QUERY_MAP = {
 }
 
 # This example uses a common, system user, for the API key
-REDASH_USER_API_KEY = '0k7eTUtIsQaPqYDlpp1NqFYAL3DCAn85lmAhBPXZ'
+REDASH_USER_API_KEY = os.environ.get('REDASH_USER_API_KEY', '')
 
 
 def _build_db_cluster_key(params: Dict) -> str:
