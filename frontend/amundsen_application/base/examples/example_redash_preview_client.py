@@ -19,12 +19,12 @@ DEFAULT_URL = 'https://redashstage.sparedev.com/'
 
 # Update this mapping with your database.cluster and Redash query ID
 SOURCE_DB_QUERY_MAP = {
-    'postgres.analytics': 1,
-    'athena.AwsDataCatalog': 6
+    'postgres.analytics': 46,
+    'athena.AwsDataCatalog': 45
 }
 
 # This example uses a common, system user, for the API key
-REDASH_USER_API_KEY = os.environ.get('REDASH_USER_API_KEY', '')
+REDASH_USER_API_KEY = '0k7eTUtIsQaPqYDlpp1NqFYAL3DCAn85lmAhBPXZ'
 
 
 def _build_db_cluster_key(params: Dict) -> str:
