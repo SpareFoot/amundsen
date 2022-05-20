@@ -54,7 +54,7 @@ spec:
           - configMapRef:
               name: {{ template "amundsen.fullname" . }}-{{ .Values.frontEnd.serviceName }}
         command: ["gunicorn"]
-        args: ['-w', '4', '-t', '120', '--bind', ':5000', 'amundsen_application.wsgi']
+        args: ['-w', '4', '-t', '120', '--bind', ':5000', 'amundsen_application.wsgi', '--debug']
         readinessProbe:
           httpGet:
             path: "/healthcheck"
