@@ -46,23 +46,18 @@ class RedashApiResponse(Enum):
 class BaseRedashPreviewClient(BasePreviewClient):
     """
     Generic client for using Redash as a preview client backend.
-
     Redash does not allow arbitrary queries to be submitted but it does allow
     the creation of templated queries that can be saved and referenced. Amundsen
     uses these templated queries to pass in arguments such as the schema name
     and table name in order to dynamically build a query on the fly.
-
     The suggested format of the query template is:
-
         select {{ SELECT_FIELDS }}
         from {{ SCHEMA_NAME }}.{{ TABLE_NAME }}
         {{ WHERE_CLAUSE }}
         limit {{ RCD_LIMIT }}
-
     You will need to use the params (e.g. database, cluster, schema and table names)
     to idenfiy the specific query ID in Redash to use. This is done via the
     `get_redash_query_id` method.
-
     The template values in the Redash query will be filled by the `build_redash_query_params`
     function.
     """
@@ -79,14 +74,11 @@ class BaseRedashPreviewClient(BasePreviewClient):
         """
         Retrieves the query template that should be executed for the given
         source / database / schema / table combination.
-
         Redash Connections are generally unique to the source and database.
         For example, Snowflake account that has two databases would require two
         separate connections in Redash. This would require at least one query
         template per connection.
-
         The query ID can be found in the URL of the query when using the Redash GUI.
-
         :param params: A dictionary of input parameters containing the database,
             cluster, schema and tableName
         :returns: the ID for the query in Redash. Can be None if one does not exist.
@@ -98,7 +90,6 @@ class BaseRedashPreviewClient(BasePreviewClient):
         Generates the headers to use for the API invocation. Attemps to use a
         Query API key, if it exists, then falls back to a User API if no
         query API key is returned.
-
         Background on Redash API keys: https://redash.io/help/user-guide/integrations-and-api/api
         """
         api_key = self._get_query_api_key(params) or self.user_api_key
@@ -118,9 +109,7 @@ class BaseRedashPreviewClient(BasePreviewClient):
         Allows customization of the fields in the select clause. This can be used to
         return a subset of fields or to apply functions (e.g. to mask data) on a
         table by table basis. Defaults to `*` for all fields.
-
         This string should be valid SQL AND fit BETWEEN the brackets `SELECT {} FROM ...`
-
         :param params: A dictionary of input parameters containing the database,
             cluster, schema and tableName
         :returns: a string corresponding to fields to select in the query
@@ -140,13 +129,15 @@ class BaseRedashPreviewClient(BasePreviewClient):
         template. The keys in this dictionary MUST be a case-sensitive match to the
         template names in the Redash query and you MUST have the exact same parameters,
         no more, no less.
-
         Override this function to provide custom values.
         """
         return {
             'parameters': {
+                'SELECT_FIELDS': self.get_select_fields(params),
                 'SCHEMA_NAME': params.get('schema'),
                 'TABLE_NAME': params.get('tableName'),
+                'WHERE_CLAUSE': self.get_where_clause(params),
+                'RCD_LIMIT': str(self.default_query_limit)
             },
             'max_age': self.max_redash_cache_age
         }
@@ -155,7 +146,6 @@ class BaseRedashPreviewClient(BasePreviewClient):
         """
         Starts a query in Redash. Returns a job ID that can be used to poll for
         the job status.
-
         :param query_id: The ID of the query in the Redash system. This can
             be retrieved by viewing the URL for your query template in the
             Redash GUI.
@@ -187,7 +177,6 @@ class BaseRedashPreviewClient(BasePreviewClient):
     def _wait_for_query_finish(self, job_id: str, max_wait: int = 60) -> str:
         """
         Waits for the query to finish and validates that a successful response is returned.
-
         :param job_id: the ID for the job executing the query
         :return: a query result ID tha can be used to fetch the results
         """
@@ -222,7 +211,6 @@ class BaseRedashPreviewClient(BasePreviewClient):
     def _get_query_results(self, query_result_id: str) -> Dict:
         """
         Retrieves query results from a successful query run
-
         :param query_result_id: ID returned by Redash after a successful query execution
         :return: A Redash response dictionary
         """

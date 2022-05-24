@@ -80,7 +80,7 @@ setup(
         [action_log.post_exec.plugin]
         logging_action_log=amundsen_application.log.action_log_callback:logging_action_log
         [preview_client]
-        table_preview_client_class = amundsen_application.base.examples.example_redash_preview_client:RedashComplexPreviewClient
+        table_preview_client_class = amundsen_application.base.storable_redash_preview_client:StorableRedashPreviewClient
     """,
     classifiers=[
         'Programming Language :: Python :: 3.7',
