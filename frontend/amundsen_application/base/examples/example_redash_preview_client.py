@@ -68,9 +68,7 @@ class RedashComplexPreviewClient(BaseRedashPreviewClient):
         self.max_redash_cache_age = 3600  # One Hour
 
     def _get_query_api_key(self, params: Dict) -> Optional[str]:
-        if params.get('database') in ['redshift']:
-            return REDASH_USER_API_KEY
-        return None
+        return REDASH_USER_API_KEY
 
     def get_redash_query_id(self, params: Dict) -> Optional[int]:
         db_cluster_key = _build_db_cluster_key(params)
