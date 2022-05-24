@@ -7,7 +7,7 @@ from amundsen_application.base.base_redash_preview_client import BaseRedashPrevi
 
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_URL = 'https://redashstage.sparedev.com/'
+DEFAULT_URL = 'https://redashstage.sparedev.com'
 # mapping database.cluster to a Redash query ID
 SOURCE_DB_QUERY_MAP = {
     'postgres.analytics': 46,
