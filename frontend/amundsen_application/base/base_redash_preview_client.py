@@ -145,11 +145,8 @@ class BaseRedashPreviewClient(BasePreviewClient):
         """
         return {
             'parameters': {
-                'SELECT_FIELDS': self.get_select_fields(params),
                 'SCHEMA_NAME': params.get('schema'),
                 'TABLE_NAME': params.get('tableName'),
-                'WHERE_CLAUSE': self.get_where_clause(params),
-                'RCD_LIMIT': str(self.default_query_limit)
             },
             'max_age': self.max_redash_cache_age
         }
