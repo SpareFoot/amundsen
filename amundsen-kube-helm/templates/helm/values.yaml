@@ -1,6 +1,8 @@
 # Duplicate this file and put your customization here
 sf_env: {{ sf_env }}
 
+redash_user_api_key: {{ redash_user_api_key }}
+
 clusterDomain: cluster.local
 
 # common settings for all apps
