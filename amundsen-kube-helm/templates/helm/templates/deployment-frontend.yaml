@@ -46,15 +46,20 @@ spec:
     {{- end }}
       containers:
       - name: {{ .Chart.Name }}-{{ .Values.frontEnd.serviceName }}
-        image: {{ .Values.frontEnd.image }}:{{ .Values.frontEnd.imageTag }}
+        image: {{ .Values.image }}
         imagePullPolicy: Always
         ports:
           - containerPort: 5000
         envFrom:
           - configMapRef:
               name: {{ template "amundsen.fullname" . }}-{{ .Values.frontEnd.serviceName }}
+        env:
+        - name: SF_ENV
+          value: {{ .Values.sf_env }}
+        - name: REDASH_USER_API_KEY
+          value: {{ .Values.redash_user_api_key }}
         command: ["gunicorn"]
-        args: ['-w', '4', '--bind', ':5000', 'amundsen_application.wsgi']
+        args: ['-w', '4', '-t', '300', '--bind', ':5000', 'amundsen_application.wsgi']
         readinessProbe:
           httpGet:
             path: "/healthcheck"

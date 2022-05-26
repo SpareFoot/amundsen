@@ -258,7 +258,7 @@ class BaseRedashPreviewClient(BasePreviewClient):
                 query_result_id = self._wait_for_query_finish(job_id=query_results['job']['id'])
                 query_results = self._get_query_results(query_result_id=query_result_id)
 
-            columns = [ColumnItem(c['name'], c['type']) for c in query_results['query_result']['data']['columns']]
+            columns = [ColumnItem(c['name'], str(c['type'])) for c in query_results['query_result']['data']['columns']]
             preview_data = PreviewData(columns, query_results['query_result']['data']['rows'])
 
             data = PreviewDataSchema().dump(preview_data)
