@@ -16,14 +16,6 @@ SOURCE_DB_QUERY_MAP = {
 REDASH_USER_API_KEY = os.environ.get('REDASH_USER_API_KEY', 'Fi8eNMwexImx5rGjAhCRABVb4cbPZmDvUl1SLvlY')
 
 
-# def _build_db_cluster_key(params: Dict) -> str:
-#     _db = params.get('database')
-#     _cluster = params.get('cluster')
-#
-#     db_cluster_key = f'{_db}.{_cluster}'
-#     return db_cluster_key
-
-
 class StorableRedashPreviewClient(BaseRedashPreviewClient):
     def __init__(self,
                  *,
