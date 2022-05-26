@@ -10,13 +10,15 @@ LOGGER = logging.getLogger(__name__)
 STAGE_URL = 'https://redashstage.sparedev.com'
 PROD_URL = 'https://redash.sparedev.com'
 # mapping database.cluster to a Redash query ID
-SOURCE_DB_QUERY_MAP_STAGE = {
-    'postgres.analytics': 46,
-    'athena.AwsDataCatalog': 45
-}
-SOURCE_DB_QUERY_MAP_PROD = {
-    'postgres.analytics': 466,
-    'athena.AwsDataCatalog': 465
+SOURCE_DB_QUERY_MAP = {
+    "stage": {
+        'postgres.analytics': 46,
+        'athena.AwsDataCatalog': 45
+    },
+    "prod": {
+        'postgres.analytics': 466,
+        'athena.AwsDataCatalog': 465
+    }
 }
 REDASH_USER_API_KEY = os.environ.get('REDASH_USER_API_KEY', '')
 env = os.environ.get("SF_ENV")
@@ -36,10 +38,7 @@ class StorableRedashPreviewClient(BaseRedashPreviewClient):
         cluster = params['cluster']
         db_cluster_key = f'{database}.{cluster}'
 
-        if env == 'stage':
-            return SOURCE_DB_QUERY_MAP_STAGE.get(db_cluster_key)
-        else:
-            return SOURCE_DB_QUERY_MAP_PROD.get(db_cluster_key)
+        return SOURCE_DB_QUERY_MAP[f"{env}"].get(db_cluster_key)
 
     def _get_query_api_key(self, params: Dict) -> Optional[str]:
         return REDASH_USER_API_KEY
