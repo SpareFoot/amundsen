@@ -30,6 +30,7 @@ data:
   FLASK_APP_CLASS_NAME: FlaskOIDC
   FLASK_OIDC_CLIENT_ID: {{ .Values.oidc.frontend.client_id }}
   FLASK_OIDC_CLIENT_SECRET: {{ .Values.oidc.frontend.client_secret }}
+  SF_ENV: {{ .Values.sfenv }
 {{ toYaml .Values.oidc.configs | indent 2 }}
   {{ end }}
 {{ if .Values.frontEnd.envVars }}

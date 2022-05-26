@@ -7,19 +7,21 @@ from amundsen_application.base.base_redash_preview_client import BaseRedashPrevi
 
 
 LOGGER = logging.getLogger(__name__)
-DEFAULT_URL = 'https://redashstage.sparedev.com'
+STAGE_URL = 'https://redashstage.sparedev.com'
+PROD_URL = 'https://redash.sparedev.com'
 # mapping database.cluster to a Redash query ID
 SOURCE_DB_QUERY_MAP = {
     'postgres.analytics': 46,
     'athena.AwsDataCatalog': 45
 }
-REDASH_USER_API_KEY = os.environ.get('REDASH_USER_API_KEY', 'Fi8eNMwexImx5rGjAhCRABVb4cbPZmDvUl1SLvlY')
+REDASH_USER_API_KEY = os.environ.get('REDASH_USER_API_KEY', '')
+env = os.environ.get("SF_ENV")
 
 
 class StorableRedashPreviewClient(BaseRedashPreviewClient):
     def __init__(self,
                  *,
-                 redash_host: str = DEFAULT_URL,
+                 redash_host: str = STAGE_URL if env == 'stage' else PROD_URL,
                  user_api_key: Optional[str] = REDASH_USER_API_KEY) -> None:
         super().__init__(redash_host=redash_host, user_api_key=user_api_key)
         self.default_query_limit = 50
