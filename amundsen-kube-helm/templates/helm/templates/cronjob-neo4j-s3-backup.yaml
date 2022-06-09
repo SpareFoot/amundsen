@@ -30,8 +30,9 @@ spec:
             - "/bin/sh"
             - "-c"
             - |
-              apk -v --update add --no-cache --quiet curl python py-pip &&
-              pip install awscli -q &&
+              apt-get update && 
+              apt-get install python3-pip &&
+              pip3 install awscli -q &&
               NOW="$(date "+%Y-%m-%d-%H:%M:%S")" &&
               BACKUP_SCHEMA_NAME="graph.db-backup-$NOW.schema" &&
               BACKUP_DATA_NAME="graph.db-backup-$NOW.data" &&
