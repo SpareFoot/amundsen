@@ -404,6 +404,7 @@ elasticsearch:
   # -- set init memory size (Xms) and maximum memory size (Xmx) for the es jvm.
   esJavaOpts: -Xmx2g -Xms2g
   # -- set the pod resources
+#  clusterHealthCheckParams: 'wait_for_status=yellow&timeout=1s'
   resources:
     limits:
       memory: 4Gi

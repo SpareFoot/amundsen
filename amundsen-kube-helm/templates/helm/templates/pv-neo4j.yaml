@@ -19,5 +19,5 @@ spec:
     path: {{ default "/" .Values.neo4j.persistence.path }}
   claimRef:
     name: neo4j-pvc
-    namespace: stage
+    namespace: {{ .Values.namespace }}
 {{- end }}

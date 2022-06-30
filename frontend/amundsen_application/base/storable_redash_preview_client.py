@@ -11,8 +11,14 @@ STAGE_URL = 'https://redashstage.sparedev.com'
 PROD_URL = 'https://redash.sparedev.com'
 # mapping database.cluster to a Redash query ID
 SOURCE_DB_QUERY_MAP = {
-    'postgres.analytics': 46,
-    'athena.AwsDataCatalog': 45
+    "stage": {
+        'postgres.analytics': 46,
+        'athena.AwsDataCatalog': 45
+    },
+    "prod": {
+        'postgres.analytics': 466,
+        'athena.AwsDataCatalog': 465
+    }
 }
 REDASH_USER_API_KEY = os.environ.get('REDASH_USER_API_KEY', '')
 env = os.environ.get("SF_ENV")
@@ -31,7 +37,8 @@ class StorableRedashPreviewClient(BaseRedashPreviewClient):
         database = params['database']
         cluster = params['cluster']
         db_cluster_key = f'{database}.{cluster}'
-        return SOURCE_DB_QUERY_MAP.get(db_cluster_key)
+
+        return SOURCE_DB_QUERY_MAP[f"{env}"].get(db_cluster_key)
 
     def _get_query_api_key(self, params: Dict) -> Optional[str]:
         return REDASH_USER_API_KEY
@@ -42,7 +49,6 @@ class StorableRedashPreviewClient(BaseRedashPreviewClient):
         template. The keys in this dictionary MUST be a case-sensitive match to the
         template names in the Redash query and you MUST have the exact same parameters,
         no more, no less.
-
         Override this function to provide custom values.
         """
         return {
