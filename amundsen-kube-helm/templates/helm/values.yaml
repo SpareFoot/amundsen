@@ -56,22 +56,22 @@ oidc:
   #   - everything under oidc.configs will be parsed
   #   - flaskApp.module will be set as 'flaskoidc'
   #   - flaskApp.class will be set as 'FlaskOIDC'
-  enabled: false
+  enabled: true
   frontend:
-    client_id: ""
+    client_id: "684309352143-4ferktkfnplvm5mend8ve57hpk620fe6.apps.googleusercontent.com"
     # Do not paste the secret directly here, instead set this via env variable like
     # `--set oidc.frontend.client_secret=$OIDC_FRONTEND_CLIENT_SECRET`
-    client_secret: ""
+    client_secret: {{ google_secret }}
   metadata:
-    client_id: ""
+    client_id: "684309352143-4ferktkfnplvm5mend8ve57hpk620fe6.apps.googleusercontent.com"
     # Do not paste the secret directly here, instead set this via env variable like
     # `--set oidc.metadata.client_secret=$OIDC_METADATA_CLIENT_SECRET`
-    client_secret: ""
+    client_secret: {{ google_secret }}
   search:
-    client_id: ""
+    client_id: "684309352143-4ferktkfnplvm5mend8ve57hpk620fe6.apps.googleusercontent.com"
     # Do not paste the secret directly here, instead set this via env variable like
     # `--set oidc.search.client_secret=$OIDC_SEARCH_CLIENT_SECRET`
-    client_secret: ""
+    client_secret: {{ google_secret }}
 
   # Everything under oidc.configs will be parsed as environment variables for each service.
   configs:
