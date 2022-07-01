@@ -114,7 +114,7 @@ search:
     password:
 
   # search.image -- The image of the search container.
-  image: amundsendev/amundsen-search
+  image: 850077434821.dkr.ecr.us-east-1.amazonaws.com/sparefoot/snorkel-search:latest
 
   # search.imagePullSecrets -- Optional pod imagePullSecrets [ref](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
   imagePullSecrets: []
