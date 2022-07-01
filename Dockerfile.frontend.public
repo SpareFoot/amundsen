@@ -16,7 +16,8 @@ COPY --from=node-stage /app /app
 COPY ./frontend /app
 COPY requirements-dev.txt /app/requirements-dev.txt
 COPY requirements-common.txt /app/requirements-common.txt
-RUN pip3 install -e .
+RUN  pip3 install -e .&& \
+     pip3 install -e .[oidc]
 
 CMD [ "python3",  "amundsen_application/wsgi.py" ]
 
