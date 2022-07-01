@@ -181,7 +181,7 @@ metadata:
     password:
 
   # metadata.image -- The image of the metadata container.
-  image: amundsendev/amundsen-metadata
+  image: amundsendev/amundsen-metadata-oidc
 
   # metadata.imagePullSecrets -- Optional pod imagePullSecrets [ref](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
   imagePullSecrets: []
@@ -233,7 +233,7 @@ frontEnd:
   serviceType: ClusterIP
 
   # frontEnd.image -- The image of the frontend container.
-  image: amundsendev/amundsen-frontend
+  image: amundsendev/amundsen-frontend-oidc
 
   # frontEnd.imagePullSecrets -- Optional pod imagePullSecrets [ref](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
   imagePullSecrets: []
