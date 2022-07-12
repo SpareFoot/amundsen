@@ -9,12 +9,12 @@ from typing import Any, Callable, Dict, List, Optional, Set  # noqa: F401
 import boto3
 from flask import Flask  # noqa: F401
 
-from metadata.metadata_service.entity.badge import Badge
+from metadata_service.entity.badge import Badge
 from flask import current_app as app
 from common.amundsen_common.models.user import UserSchema
 
-from metadata.metadata_service.exception import NotFoundException
-from metadata.metadata_service.proxy import get_proxy_client
+from metadata_service.exception import NotFoundException
+from metadata_service.proxy import get_proxy_client
 
 # PROXY configuration keys
 PROXY_HOST = 'PROXY_HOST'
