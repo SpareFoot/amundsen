@@ -45,7 +45,7 @@ from metadata_service.entity.dashboard_query import DashboardQuery
 from metadata_service.entity.description import Description
 from metadata_service.entity.tag_detail import TagDetail
 from metadata_service.exception import NotFoundException
-from metadata_service.proxy import BaseProxy
+from metadata_service.proxy.base_proxy import BaseProxy
 from metadata_service.util import UserResourceRel
 
 LOGGER = logging.getLogger(__name__)

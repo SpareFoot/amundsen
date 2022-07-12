@@ -8,7 +8,7 @@ from amundsen_common.models.table import (Application, Column,
                                           ProgrammaticDescription, Table)
 from amundsen_common.models.user import User
 
-from metadata_service.proxy import BaseProxy
+from metadata_service.proxy.base_proxy import BaseProxy
 
 
 class RoundtripBaseProxy(BaseProxy):

@@ -16,7 +16,7 @@ from metadata_service.api.tag import TagCommon
 from metadata_service.entity.dashboard_detail import DashboardSchema
 from metadata_service.entity.description import DescriptionSchema
 from metadata_service.exception import NotFoundException
-from metadata_service.proxy import get_proxy_client
+from metadata_service.config import get_proxy_client
 
 
 class DashboardDetailAPI(BaseAPI):
