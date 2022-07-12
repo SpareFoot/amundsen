@@ -181,7 +181,7 @@ metadata:
     password:
 
   # metadata.image -- The image of the metadata container.
-  image: amundsendev/amundsen-metadata-oidc
+  image: 850077434821.dkr.ecr.us-east-1.amazonaws.com/sparefoot/snorkel-metadata
 
   # metadata.imagePullSecrets -- Optional pod imagePullSecrets [ref](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
   imagePullSecrets: []
