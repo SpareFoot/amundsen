@@ -17,7 +17,7 @@ from metadata_service.api.badge import BadgeCommon
 from metadata_service.api.tag import TagCommon
 from metadata_service.entity.dashboard_summary import DashboardSummarySchema
 from metadata_service.exception import NotFoundException
-from metadata_service.proxy import get_proxy_client
+from metadata_service.config import get_proxy_client
 
 
 class TableDetailAPI(Resource):

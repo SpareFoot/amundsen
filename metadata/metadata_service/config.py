@@ -8,13 +8,16 @@ from typing import Any, Callable, Dict, List, Optional, Set  # noqa: F401
 
 import boto3
 from flask import Flask  # noqa: F401
+from threading import Lock
 
 from metadata_service.entity.badge import Badge
 from flask import current_app as app
-from common.amundsen_common.models.user import UserSchema
+from amundsen_common.models.user import UserSchema
 
 from metadata_service.exception import NotFoundException
-from metadata_service.proxy import get_proxy_client
+# from metadata_service.proxy import get_proxy_client
+from metadata_service.proxy.base_proxy import BaseProxy
+from werkzeug.utils import import_string
 
 # PROXY configuration keys
 PROXY_HOST = 'PROXY_HOST'
@@ -39,6 +42,45 @@ PROXY_CLIS = {
 
 IS_STATSD_ON = 'IS_STATSD_ON'
 USER_OTHER_KEYS = 'USER_OTHER_KEYS'
+
+_proxy_client = None
+_proxy_client_lock = Lock()
+
+
+def get_proxy_client() -> BaseProxy:
+    """
+    Provides singleton proxy client based on the config
+    :return: Proxy instance of any subclass of BaseProxy
+    """
+    global _proxy_client
+
+    if _proxy_client:
+        return _proxy_client
+
+    with _proxy_client_lock:
+        if _proxy_client:
+            return _proxy_client
+        else:
+            # Gather all the configuration to create a Proxy Client
+            host = app.config[PROXY_HOST]
+            port = app.config[PROXY_PORT]
+            user = app.config[PROXY_USER]
+            password = app.config[PROXY_PASSWORD]
+            encrypted = app.config[PROXY_ENCRYPTED]
+            validate_ssl = app.config[PROXY_VALIDATE_SSL]
+
+            client_kwargs = app.config[PROXY_CLIENT_KWARGS]
+
+            client = import_string(app.config[PROXY_CLIENT])
+            _proxy_client = client(host=host,
+                                   port=port,
+                                   user=user,
+                                   password=password,
+                                   encrypted=encrypted,
+                                   validate_ssl=validate_ssl,
+                                   client_kwargs=client_kwargs)
+
+    return _proxy_client
 
 
 def get_user_from_oidc(user_id: str) -> Dict:

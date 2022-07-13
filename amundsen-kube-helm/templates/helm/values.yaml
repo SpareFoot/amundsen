@@ -79,7 +79,7 @@ oidc:
     FLASK_OIDC_PROVIDER_NAME: google
 
     # oidc.configs.FLASK_OIDC_SCOPES
-    FLASK_OIDC_SCOPES: "openid email profile"
+    FLASK_OIDC_SCOPES: "openid email profile https://www.googleapis.com/auth/directory.readonly"
 
     # oidc.configs.FLASK_OIDC_USER_ID_FIELD
     FLASK_OIDC_USER_ID_FIELD: email

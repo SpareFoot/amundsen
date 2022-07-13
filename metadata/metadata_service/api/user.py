@@ -19,7 +19,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from metadata_service.api import BaseAPI
 from metadata_service.exception import NotFoundException
-from metadata_service.proxy import get_proxy_client
+from metadata_service.config import get_proxy_client
 from metadata_service.util import UserResourceRel
 
 LOGGER = logging.getLogger(__name__)

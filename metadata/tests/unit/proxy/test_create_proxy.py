@@ -9,8 +9,7 @@ from unittest.mock import MagicMock, patch
 from flask import Flask
 
 import metadata_service
-from metadata_service.config import PROXY_CLIENTS
-from metadata_service.proxy import get_proxy_client
+from metadata_service.config import PROXY_CLIENTS, get_proxy_client
 
 
 class TestCreateProxy(unittest.TestCase):
