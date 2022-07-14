@@ -49,7 +49,7 @@ __version__ = '4.1.2'
 
 jira = ['jira==3.0.1']
 asana = ['asana==0.10.3']
-oidc = ['flaskoidc==0.2.3']
+oidc = ['flaskoidc>=1.0.0']
 pyarrrow = ['pyarrow==3.0.0']
 bigquery_preview = ['google-cloud-bigquery>=2.13.1,<3.0.0', 'flatten-dict==0.3.0']
 all_deps = requirements + requirements_common + requirements_dev + oidc + pyarrrow + bigquery_preview + jira + asana

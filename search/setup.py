@@ -7,7 +7,7 @@ from setuptools import find_packages, setup
 
 __version__ = '4.0.2'
 
-oidc = ['flaskoidc==0.2.3']
+oidc = ['flaskoidc>=1.0.0']
 
 requirements_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'requirements.txt')
 with open(requirements_path) as requirements_file:
