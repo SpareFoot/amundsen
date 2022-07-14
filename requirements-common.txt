@@ -13,7 +13,7 @@ flasgger==0.9.5
 Flask==1.0.2
 Flask-RESTful>=0.3.6
 flask-cors==3.0.10
-flaskoidc>=1.0.0
+flaskoidc==0.2.3
 itsdangerous<=2.0.1
 Jinja2>=2.10.1,<3.1
 jsonschema>=3.0.1,<4.0
