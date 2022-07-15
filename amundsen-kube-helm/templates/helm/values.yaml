@@ -253,7 +253,7 @@ frontEnd:
 
   # frontEnd.config.class -- Optional Config class.
   config:
-    class:
+    class: amundsen_application.oidc_config.OidcConfig
 
   # frontEnd.ALL_UNEDITABLE_SCHEMAS -- Environment variable for allowing/disallowing editing schemas via the UI. All schemas are allowed to be edited by default. Set to 'true' to disallow.
   # See https://www.amundsen.io/amundsen/frontend/docs/flask_config/#uneditable-table-descriptions for more
