@@ -10,7 +10,7 @@ from flasgger import swag_from
 from flask import request
 from flask_restful import Resource
 
-from metadata_service.proxy import get_proxy_client
+from metadata_service.config import get_proxy_client
 
 
 class PopularTablesAPI(Resource):

@@ -12,7 +12,7 @@ from flask import request
 from flask_restful import Resource
 
 from metadata_service.deprecations import print_deprecation_warning
-from metadata_service.proxy import get_proxy_client
+from metadata_service.config import get_proxy_client
 
 
 class PopularResourcesAPI(Resource):

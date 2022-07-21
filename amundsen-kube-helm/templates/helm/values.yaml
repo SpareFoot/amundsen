@@ -56,22 +56,22 @@ oidc:
   #   - everything under oidc.configs will be parsed
   #   - flaskApp.module will be set as 'flaskoidc'
   #   - flaskApp.class will be set as 'FlaskOIDC'
-  enabled: false
+  enabled: true
   frontend:
-    client_id: ""
+    client_id: "684309352143-4ferktkfnplvm5mend8ve57hpk620fe6.apps.googleusercontent.com"
     # Do not paste the secret directly here, instead set this via env variable like
     # `--set oidc.frontend.client_secret=$OIDC_FRONTEND_CLIENT_SECRET`
-    client_secret: ""
+    client_secret: {{ google_secret }}
   metadata:
-    client_id: ""
+    client_id: "684309352143-4ferktkfnplvm5mend8ve57hpk620fe6.apps.googleusercontent.com"
     # Do not paste the secret directly here, instead set this via env variable like
     # `--set oidc.metadata.client_secret=$OIDC_METADATA_CLIENT_SECRET`
-    client_secret: ""
+    client_secret: {{ google_secret }}
   search:
-    client_id: ""
+    client_id: "684309352143-4ferktkfnplvm5mend8ve57hpk620fe6.apps.googleusercontent.com"
     # Do not paste the secret directly here, instead set this via env variable like
     # `--set oidc.search.client_secret=$OIDC_SEARCH_CLIENT_SECRET`
-    client_secret: ""
+    client_secret: {{ google_secret }}
 
   # Everything under oidc.configs will be parsed as environment variables for each service.
   configs:
@@ -79,7 +79,7 @@ oidc:
     FLASK_OIDC_PROVIDER_NAME: google
 
     # oidc.configs.FLASK_OIDC_SCOPES
-    FLASK_OIDC_SCOPES: "openid email profile"
+    FLASK_OIDC_SCOPES: "openid email profile https://www.googleapis.com/auth/directory.readonly"
 
     # oidc.configs.FLASK_OIDC_USER_ID_FIELD
     FLASK_OIDC_USER_ID_FIELD: email
@@ -114,7 +114,7 @@ search:
     password:
 
   # search.image -- The image of the search container.
-  image: amundsendev/amundsen-search
+  image: 850077434821.dkr.ecr.us-east-1.amazonaws.com/sparefoot/snorkel-search
 
   # search.imagePullSecrets -- Optional pod imagePullSecrets [ref](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
   imagePullSecrets: []
@@ -181,7 +181,7 @@ metadata:
     password:
 
   # metadata.image -- The image of the metadata container.
-  image: amundsendev/amundsen-metadata
+  image: 850077434821.dkr.ecr.us-east-1.amazonaws.com/sparefoot/snorkel-metadata
 
   # metadata.imagePullSecrets -- Optional pod imagePullSecrets [ref](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
   imagePullSecrets: []
@@ -233,7 +233,7 @@ frontEnd:
   serviceType: ClusterIP
 
   # frontEnd.image -- The image of the frontend container.
-  image: amundsendev/amundsen-frontend
+  image: amundsendev/amundsen-frontend-oidc
 
   # frontEnd.imagePullSecrets -- Optional pod imagePullSecrets [ref](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/)
   imagePullSecrets: []
@@ -253,7 +253,7 @@ frontEnd:
 
   # frontEnd.config.class -- Optional Config class.
   config:
-    class:
+    class: amundsen_application.oidc_config.OidcConfig
 
   # frontEnd.ALL_UNEDITABLE_SCHEMAS -- Environment variable for allowing/disallowing editing schemas via the UI. All schemas are allowed to be edited by default. Set to 'true' to disallow.
   # See https://www.amundsen.io/amundsen/frontend/docs/flask_config/#uneditable-table-descriptions for more

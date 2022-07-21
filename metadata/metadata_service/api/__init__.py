@@ -7,7 +7,7 @@ from typing import Any, Iterable, List, Mapping, Optional, Union
 
 from flask_restful import Resource
 
-from metadata_service.proxy import BaseProxy
+from metadata_service.proxy.base_proxy import BaseProxy
 
 LOGGER = logging.getLogger(__name__)
 

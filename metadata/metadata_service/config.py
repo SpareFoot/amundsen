@@ -8,8 +8,16 @@ from typing import Any, Callable, Dict, List, Optional, Set  # noqa: F401
 
 import boto3
 from flask import Flask  # noqa: F401
+from threading import Lock
 
 from metadata_service.entity.badge import Badge
+from flask import current_app as app
+from amundsen_common.models.user import UserSchema
+
+from metadata_service.exception import NotFoundException
+# from metadata_service.proxy import get_proxy_client
+from metadata_service.proxy.base_proxy import BaseProxy
+from werkzeug.utils import import_string
 
 # PROXY configuration keys
 PROXY_HOST = 'PROXY_HOST'
@@ -34,6 +42,104 @@ PROXY_CLIS = {
 
 IS_STATSD_ON = 'IS_STATSD_ON'
 USER_OTHER_KEYS = 'USER_OTHER_KEYS'
+
+_proxy_client = None
+_proxy_client_lock = Lock()
+
+
+def get_proxy_client() -> BaseProxy:
+    """
+    Provides singleton proxy client based on the config
+    :return: Proxy instance of any subclass of BaseProxy
+    """
+    global _proxy_client
+
+    if _proxy_client:
+        return _proxy_client
+
+    with _proxy_client_lock:
+        if _proxy_client:
+            return _proxy_client
+        else:
+            # Gather all the configuration to create a Proxy Client
+            host = app.config[PROXY_HOST]
+            port = app.config[PROXY_PORT]
+            user = app.config[PROXY_USER]
+            password = app.config[PROXY_PASSWORD]
+            encrypted = app.config[PROXY_ENCRYPTED]
+            validate_ssl = app.config[PROXY_VALIDATE_SSL]
+
+            client_kwargs = app.config[PROXY_CLIENT_KWARGS]
+
+            client = import_string(app.config[PROXY_CLIENT])
+            _proxy_client = client(host=host,
+                                   port=port,
+                                   user=user,
+                                   password=password,
+                                   encrypted=encrypted,
+                                   validate_ssl=validate_ssl,
+                                   client_kwargs=client_kwargs)
+
+    return _proxy_client
+
+
+def get_user_from_oidc(user_id: str) -> Dict:
+    metadata = app.auth_client.load_server_metadata()
+    search_endpoint = f'{metadata["issuer"]}/api/v1/users?q={user_id}&limit=1'
+
+    _not_found_error = f"User Not Found in the OIDC Provider. User ID: {user_id}"
+
+    response = app.auth_client.get(search_endpoint)
+    response.raise_for_status()
+    user_info = response.json()
+    if not user_info:
+        raise NotFoundException(_not_found_error)
+    user_data = dict()
+    _user = user_info[0]
+
+    user_data.update(_user["profile"])
+    user_data.update({
+        "name": f'{_user["profile"]["firstName"]} {_user["profile"]["lastName"]}'
+    })
+    profile_url = _user.get("_links", {}).get("self", {}).get("href")
+    user_data.update({"profile_url": profile_url})
+
+    return {
+        "user_id": user_id,
+        "email": user_data["email"],
+        "first_name": user_data["firstName"],
+        "last_name": user_data["lastName"],
+        "full_name": user_data["name"],
+        "display_name": user_data["name"],
+        "profile_url": user_data["profile_url"],
+    }
+
+
+def get_user_details(user_id: str) -> Dict:
+    client = get_proxy_client()
+    schema = UserSchema()
+    try:
+        return schema.dump(client.get_user(id=user_id))
+    except NotFoundException:
+        logging.info("User not found in the database. Trying to create one using oidc.get_user_detail")
+
+    if not hasattr(app, 'auth_client'):
+        raise Exception("OpenID Connect Not Configured")
+
+    try:
+        user_info = get_user_from_oidc(user_id=user_id)
+
+        user = schema.load(user_info)
+        new_user, is_created = client.create_update_user(user=user)
+        return schema.dump(new_user)
+
+    except Exception as ex:
+        logging.exception(str(ex), exc_info=True)
+        # Return the required information only
+        return {
+            "email": user_id,
+            "user_id": user_id,
+        }
 
 
 class Config:
@@ -68,7 +174,7 @@ class Config:
 
     SWAGGER_ENABLED = os.environ.get('SWAGGER_ENABLED', False)
 
-    USER_DETAIL_METHOD = None  # type: Optional[function]
+    USER_DETAIL_METHOD = get_user_details  # type: Optional[function]
 
     RESOURCE_REPORT_CLIENT = None  # type: Optional[function]
 

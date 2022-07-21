@@ -45,12 +45,10 @@ class RedashSimplePreviewClient(BaseRedashPreviewClient):
         """
         Retrieves the query template that should be executed for the given
         source / database / schema / table combination.
-
         Redash Connections are generally unique to the source and database.
         For example, Snowflake account that has two databases would require two
         separate connections in Redash. This would require at least one query
         template per connection.
-
         The query ID can be found in the URL of the query when using the Redash GUI.
         """
         db_cluster_key = _build_db_cluster_key(params)
