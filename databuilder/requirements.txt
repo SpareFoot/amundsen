@@ -28,3 +28,4 @@ responses>=0.10.6
 
 amundsen-common>=0.16.0
 amundsen-rds==0.0.6
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
