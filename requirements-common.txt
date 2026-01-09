@@ -25,3 +25,4 @@ statsd==3.2.1
 typing==3.6.4
 werkzeug==2.0.3
 wheel==0.36.2
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability
