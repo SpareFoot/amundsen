@@ -860,7 +860,10 @@ class TestAtlasProxy(unittest.TestCase, Data):
         glossary_guid = self.proxy._get_user_defined_glossary_guid()
         self.assertEqual(glossary_guid, expected_guid)
 
-        self.proxy._CACHE.invalidate(self.proxy._get_user_defined_glossary_guid, '_get_user_defined_glossary_guid')
+        # Clear the module-level TTLCache so the next call is a cache miss.
+        # (Replaces beaker's self.proxy._CACHE.invalidate(...) API.)
+        from metadata_service.proxy.atlas_proxy import _ATLAS_CACHE
+        _ATLAS_CACHE.clear()
         with patch.object(self.proxy.client.glossary, 'create_glossary') as mock_execute:
             self.proxy._get_user_defined_glossary_guid()
             _, args, _ = mock_execute.mock_calls[0]
