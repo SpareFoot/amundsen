@@ -4,6 +4,7 @@
 import datetime
 import logging
 import re
+import threading
 from collections import defaultdict
 from operator import attrgetter
 from random import randint
@@ -34,8 +35,8 @@ from apache_atlas.model.instance import (AtlasEntitiesWithExtInfo, AtlasEntity,
                                          AtlasRelatedObjectId)
 from apache_atlas.model.relationship import AtlasRelationship
 from apache_atlas.utils import type_coerce
-from beaker.cache import CacheManager
-from beaker.util import parse_cache_config_options
+from cachetools import TTLCache, cached
+from cachetools.keys import hashkey
 from flask import current_app as app
 from werkzeug.exceptions import BadRequest
 
@@ -52,6 +53,22 @@ LOGGER = logging.getLogger(__name__)
 
 # Expire cache every 11 hours + jitter
 _ATLAS_PROXY_CACHE_EXPIRY_SEC = 11 * 60 * 60 + randint(0, 3600)
+_ATLAS_CACHE: TTLCache = TTLCache(maxsize=128, ttl=_ATLAS_PROXY_CACHE_EXPIRY_SEC)
+_ATLAS_CACHE_LOCK = threading.RLock()
+
+
+def _make_key(namespace):
+    # type: (str) -> Any
+    """Return a cache-key factory scoped to *namespace*.
+
+    Replaces beaker's per-method namespace so that different methods sharing
+    the same ``TTLCache`` instance never collide — even when they have
+    identical (or zero) arguments after stripping ``self``.
+    """
+    def _key(*args, **kwargs):
+        # type: (*Any, **Any) -> object
+        return hashkey(namespace, *args[1:], **kwargs)
+    return _key
 
 
 # noinspection PyMethodMayBeStatic
@@ -65,9 +82,6 @@ class AtlasProxy(BaseProxy):
     # Qualified Name of the Glossary, that holds the user defined terms.
     # For Amundsen, we are using Glossary Terms as the Tags.
     AMUNDSEN_USER_TAGS = 'amundsen_user_tags'
-    _CACHE = CacheManager(**parse_cache_config_options({'cache.regions': 'atlas_proxy',
-                                                        'cache.atlas_proxy.type': 'memory',
-                                                        'cache.atlas_proxy.expire': _ATLAS_PROXY_CACHE_EXPIRY_SEC}))
 
     def __init__(self, *,
                  host: str,
@@ -656,7 +670,7 @@ class AtlasProxy(BaseProxy):
             entity_guid=table.entity.get("guid"), attr_value=description, attr_name='description'
         )
 
-    @_CACHE.cache('_get_user_defined_glossary_guid')
+    @cached(cache=_ATLAS_CACHE, lock=_ATLAS_CACHE_LOCK, key=_make_key('_get_user_defined_glossary_guid'))
     def _get_user_defined_glossary_guid(self) -> str:
         """
         This function look for a user defined glossary i.e., self.ATLAS_USER_DEFINED_TERMS
@@ -677,7 +691,7 @@ class AtlasProxy(BaseProxy):
         glossary = self.client.glossary.create_glossary(glossary_def)
         return glossary.guid
 
-    @_CACHE.cache('_get_create_glossary_term')
+    @cached(cache=_ATLAS_CACHE, lock=_ATLAS_CACHE_LOCK, key=_make_key('_get_create_glossary_term'))
     def _get_create_glossary_term(self, term_name: str) -> Union[AtlasGlossaryTerm, AtlasEntityHeader]:
         """
         Since Atlas does not provide any API to find a term directly by a qualified name,
@@ -846,7 +860,7 @@ class AtlasProxy(BaseProxy):
         # Not implemented
         pass
 
-    @_CACHE.cache('get_tags')
+    @cached(cache=_ATLAS_CACHE, lock=_ATLAS_CACHE_LOCK, key=_make_key('get_tags'))
     def get_tags(self) -> List:
         """
         Fetch all the glossary terms from atlas, along with their assigned entities as this
@@ -872,7 +886,7 @@ class AtlasProxy(BaseProxy):
             )
         return tags
 
-    @_CACHE.cache('get_badges')
+    @cached(cache=_ATLAS_CACHE, lock=_ATLAS_CACHE_LOCK, key=_make_key('get_badges'))
     def get_badges(self) -> List:
         badges = list()
 
