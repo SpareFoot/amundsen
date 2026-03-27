@@ -4,6 +4,7 @@
 import logging
 import re
 import textwrap
+import threading
 import time
 from random import randint
 from typing import (Any, Dict, Iterable, List, Optional, Tuple,  # noqa: F401
@@ -25,8 +26,8 @@ from amundsen_common.models.table import (Application, Badge, Column,
                                           Tag, TypeMetadata, User, Watermark)
 from amundsen_common.models.user import User as UserEntity
 from amundsen_common.models.user import UserSchema
-from beaker.cache import CacheManager
-from beaker.util import parse_cache_config_options
+from cachetools import TTLCache, cached
+from cachetools.keys import hashkey
 from flask import current_app, has_app_context
 from neo4j import BoltStatementResult, Driver, GraphDatabase  # noqa: F401
 
@@ -42,10 +43,24 @@ from metadata_service.proxy.base_proxy import BaseProxy
 from metadata_service.proxy.statsd_utilities import timer_with_counter
 from metadata_service.util import UserResourceRel
 
-_CACHE = CacheManager(**parse_cache_config_options({'cache.type': 'memory'}))
-
 # Expire cache every 11 hours + jitter
 _GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC = 11 * 60 * 60 + randint(0, 3600)
+_CACHE: TTLCache = TTLCache(maxsize=128, ttl=_GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC)
+_CACHE_LOCK = threading.RLock()
+
+
+def _make_key(namespace):
+    # type: (str) -> Any
+    """Return a cache-key factory scoped to *namespace*.
+
+    Replaces beaker's per-method namespace so that different methods sharing
+    the same ``TTLCache`` instance never collide — even when they have
+    identical (or zero) arguments after stripping ``self``.
+    """
+    def _key(*args, **kwargs):
+        # type: (*Any, **Any) -> object
+        return hashkey(namespace, *args[1:], **kwargs)
+    return _key
 
 CREATED_EPOCH_MS = 'publisher_created_epoch_ms'
 LAST_UPDATED_EPOCH_MS = 'publisher_last_updated_epoch_ms'
@@ -1141,7 +1156,7 @@ class Neo4jProxy(BaseProxy):
             return neo4j_statistics
         return {}
 
-    @_CACHE.cache('_get_global_popular_resources_uris', expire=_GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC)
+    @cached(cache=_CACHE, lock=_CACHE_LOCK, key=_make_key('_get_global_popular_resources_uris'))
     def _get_global_popular_resources_uris(self, num_entries: int,
                                            resource_type: ResourceType = ResourceType.Table) -> List[str]:
         """
@@ -1170,7 +1185,7 @@ class Neo4jProxy(BaseProxy):
         return [record['resource_key'] for record in records]
 
     @timer_with_counter
-    @_CACHE.cache('_get_personal_popular_tables_uris', _GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC)
+    @cached(cache=_CACHE, lock=_CACHE_LOCK, key=_make_key('_get_personal_popular_resources_uris'))
     def _get_personal_popular_resources_uris(self, num_entries: int,
                                              user_id: str,
                                              resource_type: ResourceType = ResourceType.Table) -> List[str]:

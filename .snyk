@@ -1,0 +1,244 @@
+# Snyk (https://snyk.io) policy file — requirements-common.txt
+# This project is locked to Python 3.7.17 across many systems and cannot be
+# upgraded at this time. All security fixes listed below require Python 3.8+
+# or 3.9+, making them impossible to apply without a runtime upgrade.
+# Each entry documents the accepted risk and includes an expiry date for review.
+version: v1.25.0
+language-settings:
+  python: "3.7"
+ignore:
+  # ── urllib3 (4 CVEs) ──────────────────────────────────────────────────────
+  # All urllib3 fixes require 2.x which needs Python >=3.8/3.9.
+  # urllib3 1.26.20 is the latest 1.x release (Python 3.7 compatible).
+
+  # urllib3 - Open Redirect (CWE-601)
+  # CVSS 6.0 Medium
+  # Fix: urllib3>=2.5.0 — requires Python >=3.9
+  # NOTE: Snyk advisory explicitly states "botocore users are not affected."
+  # This project uses boto3 (which uses botocore), so actual risk is very low.
+  SNYK-PYTHON-URLLIB3-10390194:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.5.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. Additionally, Snyk advisory
+          explicitly states botocore (and thus boto3) users are NOT affected.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # urllib3 - Improper Handling of Highly Compressed Data (CWE-409)
+  # CVSS 8.9 High
+  # Fix: urllib3>=2.6.0 — requires Python >=3.9
+  SNYK-PYTHON-URLLIB3-14192442:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.6.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # urllib3 - Allocation of Resources Without Limits (CWE-770)
+  # CVSS 8.9 High
+  # Fix: urllib3>=2.6.0 — requires Python >=3.9
+  SNYK-PYTHON-URLLIB3-14192443:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.6.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # urllib3 - Improper Handling of Highly Compressed Data (CWE-409)
+  # CVSS 8.9 High
+  # Fix: urllib3>=2.6.3 — requires Python >=3.9
+  SNYK-PYTHON-URLLIB3-14896210:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.6.3 which needs Python>=3.9.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # ── requests (2 CVEs) ────────────────────────────────────────────────────
+  # requests 2.32+ requires Python >=3.8. 2.31.0 is the latest Py3.7 release.
+
+  # requests - Insertion of Sensitive Information Into Sent Data (CWE-201)
+  # CVSS Medium
+  # Fix: requests>=2.32.0 — requires Python >=3.8
+  SNYK-PYTHON-REQUESTS-10305723:
+    - '*':
+        reason: >-
+          Fix requires requests>=2.32.0 which needs Python>=3.8.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # requests - Always-Incorrect Control Flow Implementation (CWE-670)
+  # CVSS Medium
+  # Fix: requests>=2.32.0 — requires Python >=3.8
+  SNYK-PYTHON-REQUESTS-6928867:
+    - '*':
+        reason: >-
+          Fix requires requests>=2.32.0 which needs Python>=3.8.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # ── werkzeug (7 CVEs) ────────────────────────────────────────────────────
+  # werkzeug 2.3+ requires Python >=3.8. 2.2.3 is the latest Py3.7 release.
+
+  # werkzeug - Remote Code Execution (CWE-94)
+  # CVSS High
+  # Fix: werkzeug>=2.3.8 — requires Python >=3.8
+  SNYK-PYTHON-WERKZEUG-6808933:
+    - '*':
+        reason: >-
+          Fix requires werkzeug>=2.3.8 which needs Python>=3.8.
+          Project is locked to Python 3.7.17. The debugger (which contains the
+          RCE) is disabled in production deployments.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # werkzeug - Inefficient Algorithmic Complexity (CWE-407)
+  # CVSS Medium
+  # Fix: werkzeug>=2.3.8 — requires Python >=3.8
+  SNYK-PYTHON-WERKZEUG-6035177:
+    - '*':
+        reason: >-
+          Fix requires werkzeug>=2.3.8 which needs Python>=3.8.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # werkzeug - Directory Traversal (CWE-22)
+  # CVSS Medium
+  # Fix: werkzeug>=3.0.6 — requires Python >=3.8
+  SNYK-PYTHON-WERKZEUG-8309091:
+    - '*':
+        reason: >-
+          Fix requires werkzeug>=3.0.6 which needs Python>=3.8.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # werkzeug - Allocation of Resources Without Limits or Throttling (CWE-770)
+  # CVSS Medium
+  # Fix: werkzeug>=3.0.6 — requires Python >=3.8
+  SNYK-PYTHON-WERKZEUG-8309092:
+    - '*':
+        reason: >-
+          Fix requires werkzeug>=3.0.6 which needs Python>=3.8.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # werkzeug - Improper Handling of Windows Device Names (CWE-67)
+  # CVSS Medium
+  # Fix: werkzeug>=3.1.1 — requires Python >=3.9
+  SNYK-PYTHON-WERKZEUG-14151620:
+    - '*':
+        reason: >-
+          Fix requires werkzeug>=3.1.1 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. This project runs on Linux,
+          not Windows, reducing actual risk.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # werkzeug - Improper Handling of Windows Device Names (CWE-67)
+  # CVSS Medium
+  # Fix: werkzeug>=3.1.4 — requires Python >=3.9
+  SNYK-PYTHON-WERKZEUG-14908843:
+    - '*':
+        reason: >-
+          Fix requires werkzeug>=3.1.4 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. This project runs on Linux,
+          not Windows, reducing actual risk.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # werkzeug - Improper Handling of Windows Device Names (CWE-67)
+  # CVSS Medium
+  # Fix: werkzeug>=3.1.6 — requires Python >=3.9
+  SNYK-PYTHON-WERKZEUG-15322677:
+    - '*':
+        reason: >-
+          Fix requires werkzeug>=3.1.6 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. This project runs on Linux,
+          not Windows, reducing actual risk.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # ── flask-cors (3 CVEs) ──────────────────────────────────────────────────
+  # flask-cors 6.0+ requires Python >=3.9. 5.0.0 is the latest Py3.7 release.
+
+  # flask-cors - Origin Validation Error (CWE-346)
+  # CVSS Medium
+  # Fix: flask-cors>=6.0.0 — requires Python >=3.9
+  SNYK-PYTHON-FLASKCORS-9668952:
+    - '*':
+        reason: >-
+          Fix requires flask-cors>=6.0.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # flask-cors - Improper Verification of Source of a Communication Channel (CWE-940)
+  # CVSS Medium
+  # Fix: flask-cors>=6.0.0 — requires Python >=3.9
+  SNYK-PYTHON-FLASKCORS-9668953:
+    - '*':
+        reason: >-
+          Fix requires flask-cors>=6.0.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # flask-cors - Improper Handling of Case Sensitivity (CWE-178)
+  # CVSS High
+  # Fix: flask-cors>=6.0.0 — requires Python >=3.9
+  SNYK-PYTHON-FLASKCORS-9668954:
+    - '*':
+        reason: >-
+          Fix requires flask-cors>=6.0.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # ── Flask (1 CVE) ────────────────────────────────────────────────────────
+
+  # Flask - Use of Cache Containing Sensitive Information (CWE-524)
+  # CVSS Low
+  # Fix: flask>=3.1.1 — requires Python >=3.9
+  SNYK-PYTHON-FLASK-15322678:
+    - '*':
+        reason: >-
+          Fix requires flask>=3.1.1 which needs Python>=3.9.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # ── marshmallow (1 CVE) ──────────────────────────────────────────────────
+
+  # marshmallow - Asymmetric Resource Consumption / Amplification (CWE-405)
+  # CVSS Medium
+  # Fix: marshmallow>=3.26.2 — requires Python >=3.8
+  SNYK-PYTHON-MARSHMALLOW-14550833:
+    - '*':
+        reason: >-
+          Fix requires marshmallow>=3.26.2 which needs Python>=3.8.
+          Project is locked to Python 3.7.17.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # ── wheel (1 CVE) ────────────────────────────────────────────────────────
+
+  # wheel - Directory Traversal (CWE-22)
+  # CVSS Medium
+  # Fix: wheel>=0.46.2 — requires Python >=3.8
+  SNYK-PYTHON-WHEEL-15053866:
+    - '*':
+        reason: >-
+          Fix requires wheel>=0.46.2 which needs Python>=3.8.
+          Project is locked to Python 3.7.17. wheel is a build tool only,
+          not used at runtime.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z

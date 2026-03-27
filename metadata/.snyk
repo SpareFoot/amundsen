@@ -1,0 +1,62 @@
+# Snyk (https://snyk.io) policy file
+# This project is locked to Python 3.7.17 across many systems and cannot be
+# upgraded at this time. All security fixes listed below require Python 3.8+
+# or 3.9+, making them impossible to apply without a runtime upgrade.
+# Each entry documents the accepted risk and includes an expiry date for review.
+version: v1.25.0
+language-settings:
+  python: "3.7"
+ignore:
+  # urllib3 - Open Redirect (CWE-601)
+  # CVE-2025-50181 | CVSS 6.0 Medium
+  # Fix: urllib3>=2.5.0 — requires Python >=3.9
+  # NOTE: Snyk advisory explicitly states "botocore users are not affected."
+  # This project uses boto3 (which uses botocore), so actual risk is very low.
+  SNYK-PYTHON-URLLIB3-10390194:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.5.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. Additionally, Snyk advisory
+          explicitly states botocore (and thus boto3) users are NOT affected.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # urllib3 - Improper Handling of Highly Compressed Data (CWE-409)
+  # CVSS 8.9 High
+  # Fix: urllib3>=2.6.0 — requires Python >=3.9
+  # Workaround: Limit or validate content-encoding before reading response data.
+  SNYK-PYTHON-URLLIB3-14192442:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.6.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. Workaround applied: validate
+          content-encoding headers before reading compressed responses.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # urllib3 - Allocation of Resources Without Limits (CWE-770)
+  # CVSS 8.9 High
+  # Fix: urllib3>=2.6.0 — requires Python >=3.9
+  # Workaround: Set preload_content=False and limit content-encoding headers.
+  SNYK-PYTHON-URLLIB3-14192443:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.6.0 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. Workaround applied: responses
+          should use preload_content=False with content-encoding validation.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+
+  # urllib3 - Improper Handling of Highly Compressed Data (CWE-409)
+  # CVSS 8.9 High
+  # Fix: urllib3>=2.6.3 — requires Python >=3.9
+  # Workaround: Validate content-encoding headers before reading compressed responses.
+  SNYK-PYTHON-URLLIB3-14896210:
+    - '*':
+        reason: >-
+          Fix requires urllib3>=2.6.3 which needs Python>=3.9.
+          Project is locked to Python 3.7.17. Workaround applied: validate
+          content-encoding headers before reading compressed responses.
+          Risk accepted pending Python upgrade.
+        expires: 2026-09-01T00:00:00.000Z
+

@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import logging
+import threading
 import time
 from random import randint
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
@@ -55,8 +56,8 @@ from amundsen_rds.models.tag import Tag as RDSTag
 from amundsen_rds.models.updated_timestamp import \
     UpdatedTimestamp as RDSUpdatedTimestamp
 from amundsen_rds.models.user import User as RDSUser
-from beaker.cache import CacheManager
-from beaker.util import parse_cache_config_options
+from cachetools import TTLCache, cached
+from cachetools.keys import hashkey
 from flask import current_app as app
 from sqlalchemy import func
 from sqlalchemy.orm import Session, load_only, subqueryload
@@ -73,10 +74,24 @@ from metadata_service.proxy.base_proxy import BaseProxy
 from metadata_service.proxy.statsd_utilities import timer_with_counter
 from metadata_service.util import UserResourceRel
 
-_CACHE = CacheManager(**parse_cache_config_options({'cache.type': 'memory'}))
-
 # Expire cache every 11 hours + jitter
 _GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC = 11 * 60 * 60 + randint(0, 3600)
+_CACHE: TTLCache = TTLCache(maxsize=128, ttl=_GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC)
+_CACHE_LOCK = threading.RLock()
+
+
+def _make_key(namespace):
+    # type: (str) -> Any
+    """Return a cache-key factory scoped to *namespace*.
+
+    Replaces beaker's per-method namespace so that different methods sharing
+    the same ``TTLCache`` instance never collide — even when they have
+    identical (or zero) arguments after stripping ``self``.
+    """
+    def _key(*args, **kwargs):
+        # type: (*Any, **Any) -> object
+        return hashkey(namespace, *args[1:], **kwargs)
+    return _key
 
 resource_relation_model = {
     ResourceType.Table: {
@@ -731,7 +746,7 @@ class MySQLProxy(BaseProxy):
 
         return popular_resources
 
-    @_CACHE.cache('_get_global_popular_resources_uris', expire=_GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC)
+    @cached(cache=_CACHE, lock=_CACHE_LOCK, key=_make_key('_get_global_popular_resources_uris'))
     def _get_global_popular_resources_uris(self,
                                            num_entries: int,
                                            resource_type: ResourceType = ResourceType.Table) -> List[str]:
@@ -769,7 +784,7 @@ class MySQLProxy(BaseProxy):
         return [usage.res_key for usage in popular_usage]
 
     @timer_with_counter
-    @_CACHE.cache('_get_personal_popular_resources_uris', _GET_POPULAR_RESOURCES_CACHE_EXPIRY_SEC)
+    @cached(cache=_CACHE, lock=_CACHE_LOCK, key=_make_key('_get_personal_popular_resources_uris'))
     def _get_personal_popular_resources_uris(self,
                                              num_entries: int,
                                              user_id: str,

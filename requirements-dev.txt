@@ -3,14 +3,20 @@
 
 # Common dependencies for code quality control (testing, linting, static checks, etc.) ---------------------------------
 
-flake8>=3.9.2
+# flake8 6.1.0+ requires Python 3.8.1+; cap for Python 3.7 compatibility.
+flake8>=3.9.2,<6.1.0
 flake8-tidy-imports>=4.3.0
 isort[colors]~=5.8.0
-mock>=4.0.3
-mypy>=0.812,<0.900
-pytest>=6.2.4
+# mock 5.0.0+ requires Python 3.8+; cap for Python 3.7 compatibility.
+mock>=4.0.3,<5.0.0
+# mypy 0.900+ dropped typed-ast dependency; 1.5.0+ dropped Python 3.7 support.
+mypy>=0.900,<1.5.0
+pytest>=6.2.4,<8.1.0
 pytest-cov>=2.12.0
-pytest-env>=0.6.2
-pytest-mock>=3.6.1
-typed-ast>=1.4.3
-pyspark==3.0.1
+# pytest-env 1.0.0+ requires Python 3.8+; cap for Python 3.7 compatibility.
+pytest-env>=0.6.2,<1.0.0
+# pytest-mock 3.11.0+ requires Python 3.8+; cap for Python 3.7 compatibility.
+pytest-mock>=3.6.1,<3.11.0
+# typed-ast removed: mypy 0.900+ uses its own parser and no longer requires typed-ast.
+# pyspark removed: not imported anywhere in metadata service code (fixture strings are not imports).
+#   CVE-2022-33891 (CVSS 9.8 Critical) + CVE-2023-32007 (CVSS 8.8 High) - command injection via SparkUI.
